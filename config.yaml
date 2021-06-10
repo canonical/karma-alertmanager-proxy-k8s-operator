@@ -1,0 +1,9 @@
+# Copyright 2021 Xav Paice
+# See LICENSE file for licensing details.
+#
+
+options:
+  alertmanager-uri:
+    default: "https://alertmanager.demo.do.prometheus.io"
+    description: URI for the remote Alertmanager instance.
+    type: string
