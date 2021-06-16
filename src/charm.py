@@ -26,10 +26,13 @@ class AlertmanagerKarmaProxyCharm(CharmBase):
     def __init__(self, *args):
         super().__init__(*args)
         self._stored.set_default(related=False)
+        # use 'uri' here to match the Karma config dict expectation
         self.karma = KarmaProvides(
-            self, {"name": self.app.name, "uri": self.config["alertmanager-uri"]}
+            self, {"name": self.app.name, "uri": self.config["alertmanager_url"]}
         )
-        self.framework.observe(self.on.karma_available, self._on_config_changed)
+        self.framework.observe(
+            self.on.karmamanagement_available, self._on_config_changed
+        )
 
     def _on_config_changed(self, _):
         """Set the charm status."""

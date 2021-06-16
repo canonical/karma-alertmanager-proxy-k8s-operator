@@ -17,5 +17,5 @@ resources:
     description: Docker image for placeholder - won't be used
 
 provides:
-  karma:
+  karmamanagement:
     interface: karma
