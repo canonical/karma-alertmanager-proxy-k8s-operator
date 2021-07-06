@@ -1,6 +1,5 @@
-# Copyright 2021 Xav Paice
+# Copyright 2021 Canonical Ltd.
 # See LICENSE file for licensing details.
-#
 
 options:
   alertmanager_url:

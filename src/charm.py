@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-# Copyright 2021 Xav Paice
+# Copyright 2021 Canonical Ltd.
 # See LICENSE file for licensing details.
 #
 # Learn more at: https://juju.is/docs/sdk
@@ -30,9 +30,7 @@ class AlertmanagerKarmaProxyCharm(CharmBase):
         self.karma = KarmaProvides(
             self, {"name": self.app.name, "uri": self.config["alertmanager_url"]}
         )
-        self.framework.observe(
-            self.on.karmamanagement_available, self._on_config_changed
-        )
+        self.framework.observe(self.on.karmamanagement_available, self._on_config_changed)
 
     def _on_config_changed(self, _):
         """Set the charm status."""

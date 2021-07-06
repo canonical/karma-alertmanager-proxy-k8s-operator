@@ -1,5 +1,5 @@
 #!/bin/sh -e
-# Copyright 2021 Xav Paice
+# Copyright 2021 Canonical Ltd.
 # See LICENSE file for licensing details.
 
 if [ -z "$VIRTUAL_ENV" -a -d venv/ ]; then
@@ -13,5 +13,6 @@ else
 fi
 
 flake8
-coverage run --source=src -m unittest -v "$@"
+black --quiet --diff --color --check src tests || exit $?
+coverage run --branch --source=src -m unittest -v "$@"
 coverage report -m
