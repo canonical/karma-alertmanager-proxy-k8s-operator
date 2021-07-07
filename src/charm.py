@@ -8,7 +8,7 @@
 
 import logging
 
-from charms.alertmanager_karma.v0.karma import KarmaCharmEvents, KarmaProvides
+from charms.alertmanager_karma.v0.karma import KarmaConsumer
 from ops.charm import CharmBase
 from ops.framework import StoredState
 from ops.main import main
@@ -20,17 +20,20 @@ logger = logging.getLogger(__name__)
 class AlertmanagerKarmaProxyCharm(CharmBase):
     """Charm the service."""
 
-    on = KarmaCharmEvents()
     _stored = StoredState()
 
     def __init__(self, *args):
         super().__init__(*args)
         self._stored.set_default(related=False)
         # use 'uri' here to match the Karma config dict expectation
-        self.karma = KarmaProvides(
-            self, {"name": self.app.name, "uri": self.config["alertmanager_url"]}
+        # TODO update karma version
+        self.karma_lib = KarmaConsumer(
+            self,
+            "karmamanagement",
+            consumes={"karma": ">=0.0.1"},
+            config_dict={"name": self.app.name, "uri": self.config["alertmanager_url"]},
         )
-        self.framework.observe(self.on.karmamanagement_available, self._on_config_changed)
+        self.framework.observe(self.karma_lib.karmamanagement_available, self._on_config_changed)
 
     def _on_config_changed(self, _):
         """Set the charm status."""

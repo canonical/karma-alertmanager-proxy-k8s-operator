@@ -1,4 +1,4 @@
-# Copyright 2021 Xav Paice
+# Copyright 2021 Canonical Ltd.
 # See LICENSE file for licensing details.
 name: alertmanager-karma-proxy
 description: |
@@ -16,6 +16,6 @@ resources:
     type: oci-image
     description: Docker image for placeholder - won't be used
 
-provides:
+requires:
   karmamanagement:
     interface: karma
