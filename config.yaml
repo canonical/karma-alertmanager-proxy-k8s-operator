@@ -3,6 +3,5 @@
 
 options:
   alertmanager_url:
-    default: "https://alertmanager.demo.do.prometheus.io"
     description: URL for the remote Alertmanager instance.
     type: string

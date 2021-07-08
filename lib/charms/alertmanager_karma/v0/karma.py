@@ -40,10 +40,12 @@ self.karmamanagement.update_config(
 
 import logging
 
+import ops.charm
 from ops.charm import RelationBrokenEvent
-from ops.framework import EventBase, EventSource
+from ops.framework import EventBase, EventSource, ObjectEvents
 from ops.model import BlockedStatus
 from ops.relation import ConsumerBase, ProviderBase
+from ops.framework import StoredState
 
 
 # The unique Charmhub library identifier, never change it
@@ -89,6 +91,10 @@ class KarmaAvailableEvent(EventBase):
     def restore(self, snapshot):
         """Restore relation data."""
         self.data = snapshot["data"]
+
+
+class KarmaProxyEvents(ops.relation.ConsumerEvents):
+    karmamanagement_available = EventSource(KarmaAvailableEvent)
 
 
 class KarmaProvider(ProviderBase):
@@ -157,78 +163,51 @@ class KarmaConsumer(ConsumerBase):
     Hook events observed:
       - relation-changed
     """
+    on = KarmaProxyEvents()
+    _stored = StoredState()
 
-    karmamanagement_available = EventSource(KarmaAvailableEvent)
-
-    def __init__(
-        self, charm, relation_name: str, consumes: dict, multi: bool = False, config_dict={}
-    ):
+    def __init__(self, charm, relation_name: str, consumes: dict, multi: bool = False):
         super().__init__(charm, relation_name, consumes, multi)
         self.charm = charm
         self._consumer_relation_name = relation_name  # from consumer's metadata.yaml
-        self.config_dict = config_dict
+        self._stored.set_default(config={})
 
         events = self.charm.on[self._consumer_relation_name]
 
         self.framework.observe(events.relation_changed, self._on_relation_changed)
-        self.framework.observe(events.relation_broken, self._on_relation_broken)
 
-    def _config_dict_errors(self, update_only=False):
-        """Check our config dict for errors."""
-        blocked_message = "Error in ingress relation, check `juju debug-log`"
-        unknown = [x for x in self.config_dict if x not in REQUIRED_FIELDS | OPTIONAL_FIELDS]
+    def _update_relation_data(self):
+        if not self.model.unit.is_leader():
+            return
 
-        if unknown:
-            logger.error(
-                "Karma relation error, unknown key(s) in config dictionary found: %s",
-                ", ".join(unknown),
-            )
-            self.model.unit.status = BlockedStatus(blocked_message)
+        for relation in self.charm.model.relations[self._consumer_relation_name]:
+            relation.data[self.charm.app].update(self._stored.config)
+            logger.info("store_config: updated app bag: %s = %s", relation.name, relation.data[self.model.app])
+            logger.info("store_config: updated app bag (refetched): %s",
+                        self.model.get_relation(self._consumer_relation_name).data[self.model.app])
 
-            return True
+    def _on_relation_changed(self, event: ops.charm.RelationChangedEvent):
+        if not self.model.unit.is_leader():
+            return
 
-        if not update_only:
-            missing = [x for x in REQUIRED_FIELDS if x not in self.config_dict]
+        # update app data bag
+        if event.relation:
+            # event.relation.data[self.model.app].update(self._stored.config)
+            self._update_relation_data()
+            logger.info("updated app bag: %s", event.relation.data[self.model.app])
+            logger.info("updated app bag (refetched): %s",
+                        self.model.get_relation(self._consumer_relation_name).data[self.model.app])
 
-            if missing:
-                logger.error(
-                    "Karma relation error, missing required key(s) in config " "dictionary: %s ",
-                    ", ".join(missing),
-                )
-                self.model.unit.status = BlockedStatus(blocked_message)
+        self.on.karmamanagement_available.emit()
 
-                return True
+    @property
+    def config_valid(self):
+        return all(key in self._stored.config for key in ("name", "uri"))
 
-        return False
+    def store_config(self, config):
+        self._stored.config.update(config)
+        logger.info("stored config: %s", self._stored.config)
 
-    def _on_relation_broken(self, event: RelationBrokenEvent):
-        """Remove the unit data from local state."""
-        self.charm._stored.related = False
-        self.karmamanagement_available.emit()
-
-    def _on_relation_changed(self, event):
-        """Handle the relation-changed event."""
-        # `self.unit` isn't available here, so use `self.model.unit`.
-
-        if self.model.unit.is_leader():
-            if self._config_dict_errors():
-                return
-
-            for key in self.config_dict:
-                event.relation.data[self.model.app][key] = str(self.config_dict[key])
-        self.charm._stored.related = True
-        self.karmamanagement_available.emit()
-
-    def update_config(self, config_dict):
-        """Allow for updates to relation."""
-
-        if self.model.unit.is_leader():
-            self.config_dict = config_dict
-
-            if self._config_dict_errors(update_only=True):
-                return
-            relation = self.model.get_relation("karma")
-
-            if relation:
-                for key in self.config_dict:
-                    relation.data[self.model.app][key] = str(self.config_dict[key])
+        if self.config_valid:
+            self.on.karmamanagement_available.emit()
+            self._update_relation_data()
