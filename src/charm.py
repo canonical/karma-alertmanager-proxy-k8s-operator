@@ -24,10 +24,10 @@ class AlertmanagerKarmaProxyCharm(CharmBase):
         self.karma_lib = KarmaConsumer(
             self,
             self._relation_name,
-            consumes={"karma": ">=0.0.1"},  # TODO update karma version
+            consumes={self._relation_name: ">=0.0.1"},  # TODO update karma version
         )
 
-        self.framework.observe(self.on.start, self._on_start)
+        # self.framework.observe(self.on.start, self._on_start)
         self.framework.observe(self.on.config_changed, self._on_config_changed)
         self.framework.observe(self.karma_lib.on.karmamanagement_available, self._on_karma_changed)
 
@@ -47,8 +47,8 @@ class AlertmanagerKarmaProxyCharm(CharmBase):
 
         self.unit.status = ActiveStatus()
 
-    def _on_start(self, _):
-        self._update_unit_status()
+    # def _on_start(self, _):
+    #     self._update_unit_status()
 
     def _on_config_changed(self, _):
         if url := self.config.get("alertmanager_url"):

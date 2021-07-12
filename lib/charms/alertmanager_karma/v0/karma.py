@@ -41,12 +41,11 @@ self.karmamanagement.update_config(
 import logging
 
 import ops.charm
-from ops.charm import RelationBrokenEvent
 from ops.framework import EventBase, EventSource, ObjectEvents
-from ops.model import BlockedStatus
 from ops.relation import ConsumerBase, ProviderBase
 from ops.framework import StoredState
 
+from typing import List, Dict
 
 # The unique Charmhub library identifier, never change it
 LIBID = "abcdef1234"
@@ -61,25 +60,7 @@ LIBPATCH = 2
 logger = logging.getLogger(__name__)
 
 
-REQUIRED_FIELDS = {
-    "name",
-    "uri",
-}
-
-OPTIONAL_FIELDS = {
-    "proxy",
-    "readonly",
-    "headers",
-    "tls",
-}
-
-
-# Define a custom event "KarmaRelationUpdatedEvent" to be emitted
-# when relation change has completed successfully, and handled
-# by charm authors.
-# See "Notes on defining events" section in docs
-# TODO move inside KarmaConsumer class?
-class KarmaAvailableEvent(EventBase):
+class GenericEvent(EventBase):
     def __init__(self, handle, data=None):
         super().__init__(handle)
         self.data = data
@@ -93,68 +74,84 @@ class KarmaAvailableEvent(EventBase):
         self.data = snapshot["data"]
 
 
+# Define a custom event "KarmaRelationUpdatedEvent" to be emitted
+# when relation change has completed successfully, and handled
+# by charm authors.
+# See "Notes on defining events" section in docs
+# TODO move inside KarmaConsumer class?
+class KarmaAvailableEvent(GenericEvent):
+    pass
+
+
 class KarmaProxyEvents(ops.relation.ConsumerEvents):
     karmamanagement_available = EventSource(KarmaAvailableEvent)
 
 
+class KarmaAlertmanagerProxyChanged(GenericEvent):
+    pass
+
+
+class KarmaProviderEvents(ObjectEvents):
+    alertmanager_proxy_changed = EventSource(KarmaAlertmanagerProxyChanged)
+
+
 class KarmaProvider(ProviderBase):
-    _provider_relation_name = "karmamanagement"
-    karmamanagement_available = EventSource(
-        KarmaAvailableEvent
-    )  # TODO why same name as in consumer
+    on = KarmaProviderEvents()
 
-    def __init__(self, charm, service_name: str, version: str = None):
-        super().__init__(charm, self._provider_relation_name, service_name, version)
+    def __init__(self, charm, relation_name: str, version: str = None):
+        super().__init__(charm, relation_name, relation_name, version)
         self.charm = charm
-        self._service_name = service_name
+        self._relation_name = relation_name
 
-        # Set default value for the public port
-        # This is needed here to avoid accessing charm constructs directly
-        self._port = 8080  # default value
-
-        events = self.charm.on[self._provider_relation_name]
-
-        # Observe the relation-changed hook event and bind
-        # self.on_relation_changed() to handle the event.
+        events = self.charm.on[self._relation_name]
         self.framework.observe(events.relation_changed, self._on_relation_changed)
+        self.framework.observe(events.relation_departed, self._on_relation_departed)
         self.framework.observe(events.relation_broken, self._on_relation_broken)
 
-    def _on_relation_changed(self, event):
-        """Handle a change to the karma relation.
+    def get_proxied_alertmanagers(self) -> List[Dict[str, str]]:
+        alertmanager_ips = []
+        for relation in self.charm.model.relations[self._relation_name]:
+            # get related application data
+            data = None
+            for key in relation.data:
+                if key is not self.charm.app and isinstance(key, ops.model.Application):
+                    data = relation.data[key]
+            if data:
+                if (name := data.get("name")) and (uri := data.get("uri")):
+                    alertmanager_ips.append({"name": name, "uri": uri})
+            else:
+                logger.error("proxied alertmanagers: no related apps in relation dict")
 
-        Confirm we have the fields we expect to receive."""
-        # `self.unit` isn't available here, so use `self.model.unit`.
-        if not self.model.unit.is_leader():
-            return
+        return alertmanager_ips  # TODO sorted
 
-        karma_data = {
-            field: event.relation.data[event.app].get(field)
-            for field in REQUIRED_FIELDS | OPTIONAL_FIELDS
-            if event.relation.data[event.app].get(field)
-        }
+    def _on_relation_changed(self, _):
+        logger.info("===== RELATION CHANGED =====")
+        self.on.alertmanager_proxy_changed.emit()
 
-        missing_fields = sorted(
-            [field for field in REQUIRED_FIELDS if karma_data.get(field) is None]
-        )
+    def _on_relation_departed(self, _):
+        logger.info("===== RELATION DEPARTED =====")
+        self.on.alertmanager_proxy_changed.emit()
 
-        if missing_fields:
-            logger.error(
-                "Missing required data fields for karma relation: {}".format(
-                    ", ".join(missing_fields)
-                )
-            )
-            self.model.unit.status = BlockedStatus(
-                "Missing fields for karma: {}".format(", ".join(missing_fields))
-            )
+    def _on_relation_broken(self, _):
+        logger.info("===== RELATION BROKEN =====")
+        self.on.alertmanager_proxy_changed.emit()
 
-        self.charm._stored.servers[event.relation.id] = karma_data
-        # Create an event that our charm can use to decide it's okay to
-        # configure the karma.
-        self.karmamanagement_available.emit()
+    @property
+    def config_valid(self) -> bool:
+        # karma will fail starting without alertmanager server(s), which would cause pebble to error out.
 
-    def _on_relation_broken(self, event: RelationBrokenEvent):
-        """Remove the unit data from local state."""
-        self.charm._stored.servers.pop(event.relation.id, None)
+        # check that there is at least one alertmanager server configured
+        servers = self.get_proxied_alertmanagers()
+        if len(servers) == 0:
+            return False
+
+        # check that at least one of the entries has the expected keys
+        valid = False
+        for server in servers:
+            if server.get("name") and server.get("uri"):
+                valid = True
+                break
+        return valid
 
 
 class KarmaConsumer(ConsumerBase):
@@ -163,6 +160,7 @@ class KarmaConsumer(ConsumerBase):
     Hook events observed:
       - relation-changed
     """
+
     on = KarmaProxyEvents()
     _stored = StoredState()
 
@@ -182,22 +180,10 @@ class KarmaConsumer(ConsumerBase):
 
         for relation in self.charm.model.relations[self._consumer_relation_name]:
             relation.data[self.charm.app].update(self._stored.config)
-            logger.info("store_config: updated app bag: %s = %s", relation.name, relation.data[self.model.app])
-            logger.info("store_config: updated app bag (refetched): %s",
-                        self.model.get_relation(self._consumer_relation_name).data[self.model.app])
 
-    def _on_relation_changed(self, event: ops.charm.RelationChangedEvent):
-        if not self.model.unit.is_leader():
-            return
-
+    def _on_relation_changed(self, _):
         # update app data bag
-        if event.relation:
-            # event.relation.data[self.model.app].update(self._stored.config)
-            self._update_relation_data()
-            logger.info("updated app bag: %s", event.relation.data[self.model.app])
-            logger.info("updated app bag (refetched): %s",
-                        self.model.get_relation(self._consumer_relation_name).data[self.model.app])
-
+        self._update_relation_data()
         self.on.karmamanagement_available.emit()
 
     @property
