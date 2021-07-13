@@ -18,45 +18,36 @@ logger = logging.getLogger(__name__)
 
 class AlertmanagerKarmaProxyCharm(CharmBase):
     _relation_name = "karmamanagement"
+    _service_name = "karma"
 
     def __init__(self, *args):
         super().__init__(*args)
+
+        # TODO update karma version
         self.karma_lib = KarmaConsumer(
             self,
             self._relation_name,
-            consumes={self._relation_name: ">=0.0.1"},  # TODO update karma version
+            consumes={self._service_name: ">=0.0.1"},
         )
 
-        # self.framework.observe(self.on.start, self._on_start)
         self.framework.observe(self.on.config_changed, self._on_config_changed)
-        self.framework.observe(self.karma_lib.on.karmamanagement_available, self._on_karma_changed)
-
-    def _on_karma_changed(self, _):
-        self._update_unit_status()
 
     def _update_unit_status(self):
-        relation = self.model.get_relation(self._relation_name)
-
         if not self.karma_lib.config_valid:
             self.unit.status = BlockedStatus("Waiting for valid configuration")
             return
 
-        if relation is None or len(relation.units) == 0:
-            self.unit.status = BlockedStatus("Waiting for relation to Karma")
-            return
-
-        self.unit.status = ActiveStatus()
-
-    # def _on_start(self, _):
-    #     self._update_unit_status()
+        self.unit.status = ActiveStatus("Proxying {}".format(self.karma_lib.ip_address))
 
     def _on_config_changed(self, _):
         if url := self.config.get("alertmanager_url"):
-            config = {"name": self.app.name, "uri": url}
-            self.karma_lib.store_config(config)
+            logger.debug("alertmanager_url = %s", url)
 
-        logger.info("config_changed: alertmanager_url = %s", url)
-        # self._update_unit_status()
+            config = {"name": self.app.name, "uri": url}
+            if not self.karma_lib.set_config(config):
+                logger.warning("Invalid config: %s", config)
+
+        self._update_unit_status()
 
 
 if __name__ == "__main__":
