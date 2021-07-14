@@ -1,20 +1,20 @@
-# alertmanager-karma-proxy (k8s)
+# Karma Alertmanager Proxy (k8s)
 
 ## Description
 
 Proxy charm to provide the details of an [Alertmanager](https://github.com/canonical/alertmanager-operator)
-server to alertmanager-karma. This is a sidecar-only charm (no workload) that is used to pass data to karma
-over a relation.
+server to [Karma](https://github.com/canonical/karma-operator). This is a sidecar-only charm (no workload) that is used
+to pass data to Karma over a relation.
 
 ## Usage
 ```shell
-juju deploy alertmanager-karma-proxy --resource placeholder-image=alpine
-juju relate alertmanager-karma-proxy alertmanager-karma
+juju deploy karma-alertmanager-proxy-k8s --resource placeholder-image=alpine
+juju relate karma-alertmanager-proxy-k8s karma-k8s
 ```
 
 ### Configuration
 ```shell
-juju config alertmanager-karma-proxy alertmanager_url="http://some.uri.somewhere"
+juju config karma-alertmanager-proxy-k8s alertmanager_url="http://some.uri.somewhere"
 ```
 
 Note that an instance of the proxy _app_ is needed for every alertmanager _unit_.
@@ -22,8 +22,8 @@ Therefore, if more than one alertmanager unit needs to be registered in karma,
 multiple proxy apps should be used:
 
 ```shell
-juju deploy alertmanager-karma-proxy proxy1 --resource placeholder-image=alpine
-juju deploy alertmanager-karma-proxy proxy2 --resource placeholder-image=alpine
+juju deploy karma-alertmanager-proxy-k8s proxy1 --resource placeholder-image=alpine
+juju deploy karma-alertmanager-proxy-k8s proxy2 --resource placeholder-image=alpine
 
 juju config proxy1 alertmanager-uri="http://some.uri.somewhere"
 juju config proxy2 alertmanager-uri="http://some.uri.somewhere.else"
@@ -35,14 +35,14 @@ None.
 ### Scale out usage
 You may add additional units for high availability
 ```shell
-juju add-unit alertmanager-karma-proxy
+juju add-unit karma-alertmanager-proxy-k8s
 ```
 
 ## Relations
 Currently, supported relations are:
-- alertmanager-karma, which forwards the configured alertmanager unit data to karma, 
-  over the `karmamanagement` interface.
-  Set up with: `juju relate alertmanager-karma-proxy alertmanager-karma`.
+- `karma-dashboard`, which forwards the configured alertmanager unit data to karma, 
+  over the `karma_dashboard:` interface.
+  Set up with: `juju relate karma-alertmanager-proxy-k8s karma-k8s`.
 
 
 ## OCI Images

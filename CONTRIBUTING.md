@@ -1,6 +1,6 @@
-# Contributing to alertmanager-karma-proxy
+# Contributing to alertmanager-karma-proxy-operator
 The intended use case of this operator is to be deployed together with 
-alertmanager-karma.
+[karma-operator](https://github.com/canonical/karma-operator).
 
 ## Bugs and pull requests
 - Generally, before developing enhancements to this charm, you should consider
@@ -60,7 +60,7 @@ Build the charm in this git repository using
     charmcraft pack
 
 ## Usage
-See alertmanager-karma for details.
+See [karma-operator](https://github.com/canonical/karma-operator) for details.
 
 ## Code overview
 TODO
