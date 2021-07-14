@@ -43,8 +43,7 @@ class AlertmanagerKarmaProxyCharm(CharmBase):
         if url := self.config.get("alertmanager_url"):
             logger.debug("alertmanager_url = %s", url)
 
-            if not self.karma_lib.set_config(name=self.unit.name, uri=url):
-                logger.warning("Invalid config: {%s, %s}", self.unit.name, url)
+            self.karma_lib.set_config(name=self.unit.name, uri=url)
 
         self._update_unit_status()
 
