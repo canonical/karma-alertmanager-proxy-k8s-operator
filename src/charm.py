@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 
 class AlertmanagerKarmaProxyCharm(CharmBase):
-    _relation_name = "karmamanagement"
+    _relation_name = "karma-dashboard"
     _service_name = "karma"
 
     def __init__(self, *args):
@@ -43,9 +43,8 @@ class AlertmanagerKarmaProxyCharm(CharmBase):
         if url := self.config.get("alertmanager_url"):
             logger.debug("alertmanager_url = %s", url)
 
-            config = {"name": self.app.name, "uri": url}
-            if not self.karma_lib.set_config(config):
-                logger.warning("Invalid config: %s", config)
+            if not self.karma_lib.set_config(name=self.unit.name, uri=url):
+                logger.warning("Invalid config: {%s, %s}", self.unit.name, url)
 
         self._update_unit_status()
 

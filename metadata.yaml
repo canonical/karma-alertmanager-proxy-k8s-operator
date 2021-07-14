@@ -18,8 +18,8 @@ resources:
     description: Docker image for placeholder - won't be used
 
 requires:
-  karmamanagement:
-    interface: karma
+  karma-dashboard:
+    interface: karma_dashboard
 
 peers:
   replicas:
