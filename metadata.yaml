@@ -1,6 +1,6 @@
 # Copyright 2021 Canonical Ltd.
 # See LICENSE file for licensing details.
-name: alertmanager-karma-proxy
+name: karma-alertmanager-proxy-k8s
 display-name: Alertmanager proxy for Karma
 description: |
   Relation provider for Karma, we give this charm an Alertmanager server details
@@ -20,7 +20,3 @@ resources:
 requires:
   karma-dashboard:
     interface: karma_dashboard
-
-peers:
-  replicas:
-    interface: alertmanager_karma_proxy_replica
