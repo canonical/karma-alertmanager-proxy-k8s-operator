@@ -23,11 +23,10 @@ class AlertmanagerKarmaProxyCharm(CharmBase):
     def __init__(self, *args):
         super().__init__(*args)
 
-        # TODO update karma version
         self.karma_lib = KarmaConsumer(
             self,
             self._relation_name,
-            consumes={self._service_name: ">=0.0.1"},
+            consumes={self._service_name: ">=0.86"},
         )
 
         self.framework.observe(self.on.config_changed, self._on_config_changed)
