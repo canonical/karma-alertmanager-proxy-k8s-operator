@@ -2,6 +2,6 @@
 # See LICENSE file for licensing details.
 
 options:
-  alertmanager_url:
-    description: URL for the remote Alertmanager instance.
+  url:
+    description: URL for the remote Alertmanager instance (including scheme and port number).
     type: string

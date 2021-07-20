@@ -4,7 +4,7 @@
 #
 # Learn more at: https://juju.is/docs/sdk
 
-"""Proxy charm for providing alertmanager URI info to Karma."""
+"""Proxy charm for providing alertmanager URL info to Karma."""
 
 from charms.karma_k8s.v0.karma import KarmaConsumer
 from ops.charm import CharmBase
@@ -36,13 +36,13 @@ class AlertmanagerKarmaProxyCharm(CharmBase):
             self.unit.status = BlockedStatus("Waiting for valid configuration")
             return
 
-        self.unit.status = ActiveStatus("Proxying {}".format(self.karma_lib.ip_address))
+        self.unit.status = ActiveStatus("Proxying {}".format(self.karma_lib.target))
 
     def _on_config_changed(self, _):
-        if url := self.config.get("alertmanager_url"):
-            logger.debug("alertmanager_url = %s", url)
+        if url := self.config.get("url"):
+            logger.debug("url = %s", url)
 
-            self.karma_lib.set_config(name=self.unit.name, uri=url)
+            self.karma_lib.target = url
 
         self._update_unit_status()
 

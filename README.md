@@ -14,7 +14,7 @@ juju relate karma-alertmanager-proxy-k8s karma-k8s
 
 ### Configuration
 ```shell
-juju config karma-alertmanager-proxy-k8s alertmanager_url="http://some.uri.somewhere"
+juju config karma-alertmanager-proxy-k8s url="http://some.uri.somewhere:9093"
 ```
 
 Note that an instance of the proxy _app_ is needed for every alertmanager _unit_.
@@ -25,8 +25,8 @@ multiple proxy apps should be used:
 juju deploy karma-alertmanager-proxy-k8s proxy1 --resource placeholder-image=alpine
 juju deploy karma-alertmanager-proxy-k8s proxy2 --resource placeholder-image=alpine
 
-juju config proxy1 alertmanager-uri="http://some.uri.somewhere"
-juju config proxy2 alertmanager-uri="http://some.uri.somewhere.else"
+juju config proxy1 url="http://some.uri.somewhere:9093"
+juju config proxy2 url="http://some.uri.somewhere.else:9093"
 ```
 
 ### Actions
