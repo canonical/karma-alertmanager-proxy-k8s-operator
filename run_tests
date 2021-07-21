@@ -2,17 +2,5 @@
 # Copyright 2021 Canonical Ltd.
 # See LICENSE file for licensing details.
 
-if [ -z "$VIRTUAL_ENV" -a -d venv/ ]; then
-    . venv/bin/activate
-fi
-
-if [ -z "$PYTHONPATH" ]; then
-    export PYTHONPATH="lib:src"
-else
-    export PYTHONPATH="lib:src:$PYTHONPATH"
-fi
-
-flake8
-black --quiet --diff --color --check src tests || exit $?
-coverage run --branch --source=src -m unittest -v "$@"
-coverage report -m
+tox -e lint
+tox -e unit
