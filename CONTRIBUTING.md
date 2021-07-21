@@ -60,6 +60,11 @@ Build the charm in this git repository using
     charmcraft pack
 
 ## Usage
+
+    juju deploy ./alertmanager-karma-proxy-k8s.charm \
+      --resource placeholder-image=alpine
+    juju config alertmanager-karma-proxy-k8s url="http://whatever:9093"
+
 See [karma-operator](https://github.com/canonical/karma-operator) for details.
 
 ## Code overview
