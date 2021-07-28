@@ -1,7 +1,7 @@
 # Copyright 2021 Canonical Ltd.
 # See LICENSE file for licensing details.
 name: karma-alertmanager-proxy-k8s
-display-name: Alertmanager proxy for Karma
+display-name: Karma Alertmanager Proxy K8S
 description: |
   Relation provider for Karma, we give this charm an Alertmanager server details
   via configuration, and relate it to Karma to have Karma link to the remote host.

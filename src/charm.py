@@ -33,7 +33,9 @@ class AlertmanagerKarmaProxyCharm(CharmBase):
 
     def _update_unit_status(self):
         if not self.karma_lib.config_valid:
-            self.unit.status = BlockedStatus("Waiting for valid configuration")
+            self.unit.status = BlockedStatus(
+                "Waiting for 'juju config url=...' with alertmanager url"
+            )
             return
 
         self.unit.status = ActiveStatus("Proxying {}".format(self.karma_lib.target))
