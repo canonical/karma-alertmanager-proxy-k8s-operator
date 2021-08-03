@@ -4,3 +4,5 @@
 
 tox -e lint
 tox -e unit
+tox -e integration
+
