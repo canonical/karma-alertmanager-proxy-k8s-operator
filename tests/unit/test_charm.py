@@ -13,3 +13,6 @@ class TestCharm(unittest.TestCase):
         self.harness = Harness(AlertmanagerKarmaProxyCharm)
         self.addCleanup(self.harness.cleanup)
         self.harness.begin()
+
+    def test_dummy(self):
+        self.assertTrue(True)
