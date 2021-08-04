@@ -37,4 +37,4 @@ async def test_build_and_deploy(ops_test):
 
 async def test_status(ops_test):
     charm_name = METADATA["name"]
-    assert ops_test.model.applications[charm_name].units[0].workload_status == "active"
+    assert ops_test.model.applications[charm_name].units[0].workload_status == "blocked"

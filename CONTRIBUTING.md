@@ -47,7 +47,32 @@ Later on, upgrade packages as needed
 
 ### Testing
 
-    ./run_tests
+#### Linting
+
+    tox -e lint
+
+#### Unit tests
+
+    tox -e unit
+
+#### Integration tests
+
+The integration tests are based on a pytest plugin 
+([pytest-operator](https://github.com/charmed-kubernetes/pytest-operator)) 
+for [python-libjuju](https://github.com/juju/python-libjuju).
+
+To run the integration tests locally, first install dependencies:
+
+```shell
+sudo snap install charm --classic
+```
+
+Then you can run the integration tests
+
+```shell
+tox -e integration
+```
+
 
 ## Build charm
 
