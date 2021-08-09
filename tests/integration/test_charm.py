@@ -92,10 +92,10 @@ class TestClass:
         await ops_test.model.wait_for_idle(apps=["proxy"], wait_for_status="active", timeout=60)
         assert ops_test.model.applications["proxy"].units[0].workload_status == "active"
 
-    @pytest.mark.skip(reason="one at a time please")
     @pytest.mark.abort_on_fail
     async def test_relation_to_karma(self, ops_test):
         await ops_test.model.add_relation("proxy", "karma")
+        # at this point all three apps should be "active"
         await ops_test.model.wait_for_idle(wait_for_status="active")
         log.info(ops_test.model.relations)
         assert ops_test.model.applications["karma"].units[0].workload_status == "active"
