@@ -1,5 +1,3 @@
 -r requirements.txt
 tox
-coverage
-flake8
 black
