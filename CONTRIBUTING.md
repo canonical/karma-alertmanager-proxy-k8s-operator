@@ -1,5 +1,5 @@
 # Contributing to alertmanager-karma-proxy-operator
-The intended use case of this operator is to be deployed together with 
+The intended use case of this operator is to be deployed together with
 [karma-operator](https://github.com/canonical/karma-operator).
 
 ## Bugs and pull requests
@@ -25,7 +25,7 @@ The intended use case of this operator is to be deployed together with
 ## Setup
 
 A typical setup using [snaps](https://snapcraft.io/), for deployments
-to a [microk8s](https://microk8s.io/) cluster can be found in the 
+to a [microk8s](https://microk8s.io/) cluster can be found in the
 [Juju docs](https://juju.is/docs/olm/microk8s).
 
 ## Developing
@@ -38,27 +38,30 @@ activate a Python 3 virtualenv
 
 Install the development requirements
 
-    pip install -r requirements-dev.txt
+    pip install -r requirements.txt
 
 Later on, upgrade packages as needed
 
-    pip install --upgrade -r requirements-dev.txt
+    pip install --upgrade -r requirements.txt
 
 
 ### Testing
+All tests can be executed by running `tox` without arguments.
 
-#### Linting
+To run individual test environments,
 
-    tox -e lint
-
-#### Unit tests
-
-    tox -e unit
+```shell
+tox -e prettify  # update your code according to linting rules
+tox -e lint  # check your code complies to linting rules
+tox -e static # run static analysis
+tox -e unit  # run unit tests
+tox -e integration  # run inegration tests
+```
 
 #### Integration tests
 
-The integration tests are based on a pytest plugin 
-([pytest-operator](https://github.com/charmed-kubernetes/pytest-operator)) 
+The integration tests are based on a pytest plugin
+([pytest-operator](https://github.com/charmed-kubernetes/pytest-operator))
 for [python-libjuju](https://github.com/juju/python-libjuju).
 
 To run the integration tests locally, first install dependencies:
@@ -96,7 +99,7 @@ See [karma-operator](https://github.com/canonical/karma-operator) for details.
 TODO
 
 ## Design choices
-- Every alertmanager unit requires a proxy app. This allows to partially mimic a cross-model relation from 
+- Every alertmanager unit requires a proxy app. This allows to partially mimic a cross-model relation from
   the point of view of the karma operator.
 
 ## Roadmap
