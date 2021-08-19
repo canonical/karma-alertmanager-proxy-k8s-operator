@@ -16,8 +16,9 @@
 
 import logging
 from pathlib import Path
-import yaml
+
 import pytest
+import yaml
 
 log = logging.getLogger(__name__)
 

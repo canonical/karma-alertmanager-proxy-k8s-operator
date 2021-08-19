@@ -4,9 +4,11 @@
 # Learn more about testing at: https://juju.is/docs/sdk/testing
 
 import unittest
-from charm import AlertmanagerKarmaProxyCharm
-from ops.testing import Harness
+
 from ops.model import ActiveStatus, BlockedStatus
+from ops.testing import Harness
+
+from charm import AlertmanagerKarmaProxyCharm
 
 
 class TestCharm(unittest.TestCase):
