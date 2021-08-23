@@ -16,8 +16,9 @@
 
 import logging
 from pathlib import Path
-import yaml
+
 import pytest
+import yaml
 
 log = logging.getLogger(__name__)
 
@@ -34,8 +35,19 @@ async def test_build_and_deploy(ops_test):
     resources = {"placeholder-image": "alpine"}
     await ops_test.model.deploy(charm_under_test, resources=resources, application_name="proxy")
     # the charm should go into blocked status until the "proxied" url is configured
-    await ops_test.model.wait_for_idle(apps=["proxy"], wait_for_status="blocked")
+    await ops_test.model.wait_for_idle(apps=["proxy"], status="blocked")
     assert ops_test.model.applications["proxy"].units[0].workload_status == "blocked"
+
+    async def update_status_freq():
+        retcode, stdout, stderr = await ops_test._run(
+            "juju",
+            "model-config",
+            "update-status-hook-interval=10s",
+        )
+        assert (
+            retcode == 0
+        ), f"Changing update-status-hook-interval failed: {(stderr or stdout).strip()}"
+        log.info(stdout)
 
     async def cli_deploy_and_wait(
         name: str, alias: str = "", wait_for_status: str = None, channel="edge"
@@ -53,9 +65,11 @@ async def test_build_and_deploy(ops_test):
         )
         assert retcode == 0, f"Deploy failed: {(stderr or stdout).strip()}"
         log.info(stdout)
-        await ops_test.model.wait_for_idle(
-            apps=[alias], wait_for_status=wait_for_status, timeout=60
-        )
+        await ops_test.model.wait_for_idle(apps=[alias], status=wait_for_status, timeout=60)
+
+    # due to a juju bug, occasionally some charms finish a startup sequence with "waiting for IP address"
+    # issuing dummy update_status just to trigger an event
+    await update_status_freq()
 
     # deploy alertmanager from charmhub
     # await ops_test.model.deploy(
@@ -65,12 +79,6 @@ async def test_build_and_deploy(ops_test):
     # )
     # use CLI to deploy bundle until https://github.com/juju/python-libjuju/issues/511 is fixed.
     await cli_deploy_and_wait("alertmanager-k8s", "am")
-
-    # due to a juju bug, occasionally alertmanager finishes a startup sequence with "waiting for IP address"
-    # issuing a dummy config change just to trigger an event
-    await ops_test.model.applications["am"].set_config({"pagerduty_key": "just_a_dummy"})
-    await ops_test.model.wait_for_idle(apps=["am"], wait_for_status="active", timeout=60)
-    assert ops_test.model.applications["am"].units[0].workload_status == "active"
 
     # deploy karma from charmhub
     # await ops_test.model.deploy(
@@ -93,7 +101,7 @@ async def test_config_proxy_with_alertmanager_ip(ops_test):
     await ops_test.model.applications["proxy"].set_config({"url": url})
 
     # after IP address is configured, the charm should be in "active" status
-    await ops_test.model.wait_for_idle(apps=["proxy"], wait_for_status="active", timeout=60)
+    await ops_test.model.wait_for_idle(apps=["proxy"], status="active", timeout=60)
     assert ops_test.model.applications["proxy"].units[0].workload_status == "active"
 
 
@@ -103,5 +111,5 @@ async def test_relation_to_karma(ops_test):
     await ops_test.model.add_relation("proxy", "karma")
     # at this point all three apps should be "active"
     # karma will become active only if alertmanager is reachable; otherwise it will immediately exit
-    await ops_test.model.wait_for_idle(apps=["proxy", "am", "karma"], wait_for_status="active")
+    await ops_test.model.wait_for_idle(apps=["proxy", "am", "karma"], status="active")
     assert ops_test.model.applications["karma"].units[0].workload_status == "active"

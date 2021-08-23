@@ -6,12 +6,12 @@
 
 """Proxy charm for providing alertmanager URL info to Karma."""
 
+import logging
+
 from charms.karma_k8s.v0.karma import KarmaConsumer
 from ops.charm import CharmBase
 from ops.main import main
 from ops.model import ActiveStatus, BlockedStatus
-
-import logging
 
 logger = logging.getLogger(__name__)
 
