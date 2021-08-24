@@ -29,6 +29,7 @@ class AlertmanagerKarmaProxyCharm(CharmBase):
             consumes={self._service_name: ">=0.86"},
         )
 
+        # Core lifecycle events
         self.framework.observe(self.on.config_changed, self._on_config_changed)
 
     def _update_unit_status(self):
