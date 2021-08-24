@@ -38,7 +38,7 @@ class AlertmanagerKarmaProxyCharm(CharmBase):
             )
             return
 
-        self.unit.status = ActiveStatus("Proxying {}".format(self.karma_lib.target))
+        self.unit.status = ActiveStatus(f"Proxying {self.karma_lib.target}")
 
     def _on_config_changed(self, _):
         # FIXME add option to clear the config and have the charm go back into BlockedState
