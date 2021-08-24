@@ -1,5 +1,6 @@
 # Copyright 2021 Canonical Ltd.
 # See LICENSE file for licensing details.
+
 name: karma-alertmanager-proxy-k8s
 display-name: Karma Alertmanager Proxy K8S
 description: |
