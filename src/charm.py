@@ -16,6 +16,7 @@ logger = logging.getLogger(__name__)
 
 class AlertmanagerKarmaProxyCharm(CharmBase):
     """A Juju charm for "proxying" a remote alertmanager for Karma."""
+
     _relation_name = "karma-dashboard"
     _service_name = "karma"
 
