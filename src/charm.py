@@ -43,7 +43,7 @@ class AlertmanagerKarmaProxyCharm(CharmBase):
         self.unit.status = ActiveStatus(f"Proxying {self.karma_lib.target}")
 
     def _on_config_changed(self, _):
-        """Event handler for ConfigChangedEvent"""
+        """Event handler for ConfigChangedEvent."""
         # FIXME add option to clear the config and have the charm go back into BlockedState
         if url := self.config.get("url"):
             logger.debug("url = %s", url)
