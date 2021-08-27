@@ -22,9 +22,8 @@ The intended use case of this operator is to be deployed together with
 
 ## Setup
 
-A typical setup using [snaps](https://snapcraft.io/), for deployments
-to a [microk8s](https://microk8s.io/) cluster can be found in the
-[Juju docs](https://juju.is/docs/olm/microk8s).
+A typical setup using [snaps](https://snapcraft.io/) can be found in the
+[Juju docs](https://juju.is/docs/sdk/dev-setup).
 
 ## Developing
 
@@ -55,9 +54,9 @@ To run individual test environments,
 
 ```shell
 tox -e prettify  # update your code according to linting rules
-tox -e lint  # check your code complies to linting rules
-tox -e static # run static analysis
-tox -e unit  # run unit tests
+tox -e lint      # check your code complies to linting rules
+tox -e static    # run static analysis
+tox -e unit      # run unit tests
 tox -e integration  # run inegration tests
 ```
 
@@ -81,12 +80,6 @@ tox -e integration
 
 
 ## Build charm
-
-Install the charmcraft tool
-
-```shell
-sudo snap install charmcraft
-```
 
 Build the charm in this git repository using
 
