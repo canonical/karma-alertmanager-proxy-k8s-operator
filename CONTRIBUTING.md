@@ -17,9 +17,7 @@ The intended use case of this operator is to be deployed together with
 - All enhancements require review before being merged. Besides the
   code quality and test coverage, the review will also take into
   account the resulting user experience for Juju administrators using
-  this charm. Please help us out in having easier reviews by rebasing
-  onto the `main` branch, avoid merge commits and enjoy a linear Git
-  history.
+  this charm.
 
 
 ## Setup
@@ -33,17 +31,22 @@ to a [microk8s](https://microk8s.io/) cluster can be found in the
 Use your existing Python 3 development environment or create and
 activate a Python 3 virtualenv
 
-    virtualenv -p python3 venv
-    source venv/bin/activate
+```shell
+virtualenv -p python3 venv
+source venv/bin/activate
+```
 
 Install the development requirements
 
-    pip install -r requirements.txt
+```shell
+pip install -r requirements.txt
+```
 
 Later on, upgrade packages as needed
 
-    pip install --upgrade -r requirements.txt
-
+```shell
+pip install --upgrade -r requirements.txt
+```
 
 ### Testing
 All tests can be executed by running `tox` without arguments.
@@ -81,17 +84,23 @@ tox -e integration
 
 Install the charmcraft tool
 
-    sudo snap install charmcraft
+```shell
+sudo snap install charmcraft
+```
 
 Build the charm in this git repository using
 
-    charmcraft pack
+```shell
+charmcraft pack
+```
 
 ## Usage
 
-    juju deploy ./alertmanager-karma-proxy-k8s.charm \
-      --resource placeholder-image=alpine
-    juju config alertmanager-karma-proxy-k8s url="http://whatever:9093"
+```shell
+juju deploy ./alertmanager-karma-proxy-k8s.charm \
+  --resource placeholder-image=alpine
+juju config alertmanager-karma-proxy-k8s url="http://whatever:9093"
+```
 
 See [karma-operator](https://github.com/canonical/karma-operator) for details.
 
@@ -99,8 +108,8 @@ See [karma-operator](https://github.com/canonical/karma-operator) for details.
 TODO
 
 ## Design choices
-- Every alertmanager unit requires a proxy app. This allows to partially mimic a cross-model relation from
-  the point of view of the karma operator.
+- Every alertmanager unit requires a proxy app. This allows to partially mimic
+  a cross-model relation from the point of view of the karma operator.
 
 ## Roadmap
 - Support [additional fields](https://github.com/prymitive/karma/blob/main/docs/CONFIGURATION.md#alertmanagers),
