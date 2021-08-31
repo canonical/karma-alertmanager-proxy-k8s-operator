@@ -24,5 +24,8 @@ juju relate karma proxy
 Note that every alertmanager _unit_ requires a separate proxy _app_: a remote
 cluster of three alertmanager units would require three proxy apps.
 
+Version compatibility between the remote alertmanager and related applications
+is not ensured by this charm.
+
 See [karma-operator](https://github.com/canonical/karma-operator), which
 provides further details on integration.
