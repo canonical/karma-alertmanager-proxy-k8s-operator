@@ -55,6 +55,13 @@ tox -e unit      # run unit tests
 tox -e integration  # run inegration tests
 ```
 
+tox creates virtual environment for every tox environment defined in
+[tox.ini](tox.ini). To activate a tox environment for manual testing,
+
+```shell
+source .tox/unit/bin/activate
+```
+
 #### Integration tests
 
 The integration tests are based on a pytest plugin
