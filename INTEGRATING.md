@@ -27,5 +27,10 @@ cluster of three alertmanager units would require three proxy apps.
 Version compatibility between the remote alertmanager and related applications
 is not ensured by this charm.
 
-See [karma-operator](https://github.com/canonical/karma-operator), which
+See [karma-operator][Karma operator], which
 provides further details on integration.
+
+
+[Alertmanager operator]: https://charmhub.io/alertmanager-k8s
+[Karma operator]: https://charmhub.io/karma-k8s/
+

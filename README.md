@@ -2,9 +2,9 @@
 
 ## Description
 
-Proxy charm to provide the details of an [Alertmanager](https://github.com/canonical/alertmanager-operator)
-server to [Karma](https://github.com/canonical/karma-operator). This is a sidecar-only charm (no workload) that is used
-to pass data to Karma over a relation.
+Proxy charm to provide the details of an [Alertmanager][Alertmanager operator]
+server to [Karma][Karma operator]. This is a sidecar-only charm (no workload)
+that is used to pass data to Karma over a relation.
 
 ## Usage
 ```shell
@@ -48,3 +48,8 @@ Currently, supported relations are:
 ## OCI Images
 This is a no-workload charm, but currently, due to juju limitations, an image must be provided nonetheless.
 Either `alpine` or `busybox` are good choices for a small footprint, stand-in image.
+
+
+[Karma operator]: https://charmhub.io/karma-k8s/
+[gh:Alertmanager operator]: https://github.com/canonical/alertmanager-operator
+[Alertmanager operator]: https://charmhub.io/alertmanager-k8s

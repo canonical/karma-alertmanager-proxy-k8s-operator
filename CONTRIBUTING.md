@@ -1,6 +1,6 @@
 # Contributing to alertmanager-karma-proxy-operator
 The intended use case of this operator is to be deployed together with
-[karma-operator](https://github.com/canonical/karma-operator).
+[karma-operator][Karma operator].
 
 ## Bugs and pull requests
 - Generally, before developing enhancements to this charm, you should consider
@@ -9,11 +9,6 @@ The intended use case of this operator is to be deployed together with
   implementation, you can reach us at
   [Canonical Mattermost public channel](https://chat.charmhub.io/charmhub/channels/charm-dev)
   or [Discourse](https://discourse.charmhub.io/).
-- It is strongly recommended that prior to engaging in any enhancements
-  to this charm you familiarise your self with Juju.
-- Familiarising yourself with the
-  [Charmed Operator Framework](https://juju.is/docs/sdk).
-  library will help you a lot when working on PRs.
 - All enhancements require review before being merged. Besides the
   code quality and test coverage, the review will also take into
   account the resulting user experience for Juju administrators using
@@ -95,7 +90,7 @@ juju deploy ./alertmanager-karma-proxy-k8s.charm \
 juju config alertmanager-karma-proxy-k8s url="http://whatever:9093"
 ```
 
-See [karma-operator](https://github.com/canonical/karma-operator) for details.
+See [karma-operator][Karma operator] for details.
 
 ## Code overview
 TODO
@@ -107,3 +102,7 @@ TODO
 ## Roadmap
 - Support [additional fields](https://github.com/prymitive/karma/blob/main/docs/CONFIGURATION.md#alertmanagers),
   such as cluster name.
+
+
+[Karma operator]: https://charmhub.io/karma-k8s/
+[gh:Karma operator]: https://github.com/canonical/karma-operator
