@@ -1,8 +1,6 @@
 #!/usr/bin/env python3
 # Copyright 2021 Canonical Ltd.
 # See LICENSE file for licensing details.
-#
-# Learn more at: https://juju.is/docs/sdk
 
 """Proxy charm for providing alertmanager URL info to Karma."""
 
@@ -17,6 +15,8 @@ logger = logging.getLogger(__name__)
 
 
 class AlertmanagerKarmaProxyCharm(CharmBase):
+    """A Juju charm for "proxying" a remote alertmanager for Karma."""
+
     _relation_name = "karma-dashboard"
     _service_name = "karma"
 
@@ -29,18 +29,21 @@ class AlertmanagerKarmaProxyCharm(CharmBase):
             consumes={self._service_name: ">=0.86"},
         )
 
+        # Core lifecycle events
         self.framework.observe(self.on.config_changed, self._on_config_changed)
 
     def _update_unit_status(self):
+        """Helper function for updating the unit's status holistically."""
         if not self.karma_lib.config_valid:
             self.unit.status = BlockedStatus(
                 "Waiting for 'juju config url=...' with alertmanager url"
             )
             return
 
-        self.unit.status = ActiveStatus("Proxying {}".format(self.karma_lib.target))
+        self.unit.status = ActiveStatus(f"Proxying {self.karma_lib.target}")
 
     def _on_config_changed(self, _):
+        """Event handler for ConfigChangedEvent."""
         # FIXME add option to clear the config and have the charm go back into BlockedState
         if url := self.config.get("url"):
             logger.debug("url = %s", url)

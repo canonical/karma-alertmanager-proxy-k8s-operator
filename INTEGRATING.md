@@ -11,6 +11,7 @@ deploying karma, e.g. by means of some ingress. You would then configure this
 proxy charm to hold the url to the remote alertmanager
 
 ```shell
+juju deploy karma-alertmanager-proxy-k8s proxy
 juju config proxy url="http://some.url.somewhere:9093"
 ```
 
@@ -23,5 +24,13 @@ juju relate karma proxy
 Note that every alertmanager _unit_ requires a separate proxy _app_: a remote
 cluster of three alertmanager units would require three proxy apps.
 
-See [karma-operator](https://github.com/canonical/karma-operator), which
+Version compatibility between the remote alertmanager and related applications
+is not ensured by this charm.
+
+See [karma-operator][Karma operator], which
 provides further details on integration.
+
+
+[Alertmanager operator]: https://charmhub.io/alertmanager-k8s
+[Karma operator]: https://charmhub.io/karma-k8s/
+

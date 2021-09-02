@@ -1,18 +1,7 @@
 #!/usr/bin/env python3
+# Copyright 2021 Canonical Ltd.
+# See LICENSE file for licensing details.
 
-#  Copyright 2021 Canonical Ltd.
-#
-#  Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-#  You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS,
-#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#  See the License for the specific language governing permissions and
-#  limitations under the License.
 
 import logging
 from pathlib import Path
@@ -28,6 +17,7 @@ METADATA = yaml.safe_load(Path("./metadata.yaml").read_text())
 @pytest.mark.abort_on_fail
 async def test_build_and_deploy(ops_test):
     """Build the charm-under-test and deploy it together with related charms.
+
     Assert on the unit status before any relations/configurations take place.
     """
     # build and deploy charm from local source folder
@@ -67,8 +57,8 @@ async def test_build_and_deploy(ops_test):
         log.info(stdout)
         await ops_test.model.wait_for_idle(apps=[alias], status=wait_for_status, timeout=60)
 
-    # due to a juju bug, occasionally some charms finish a startup sequence with "waiting for IP address"
-    # issuing dummy update_status just to trigger an event
+    # due to a juju bug, occasionally some charms finish a startup sequence with "waiting for IP
+    # address" issuing dummy update_status just to trigger an event
     await update_status_freq()
 
     # deploy alertmanager from charmhub
@@ -107,9 +97,10 @@ async def test_config_proxy_with_alertmanager_ip(ops_test):
 
 @pytest.mark.abort_on_fail
 async def test_relation_to_karma(ops_test):
-    """Confirm alertmanager is reachable, after its IP address has been passed to the proxy charm"""
+    """Confirm alertmanager is reachable, after its IP has been passed to the proxy charm."""
     await ops_test.model.add_relation("proxy", "karma")
     # at this point all three apps should be "active"
-    # karma will become active only if alertmanager is reachable; otherwise it will immediately exit
+    # karma will become active only if alertmanager is reachable; otherwise it will immediately
+    # exit
     await ops_test.model.wait_for_idle(apps=["proxy", "am", "karma"], status="active")
     assert ops_test.model.applications["karma"].units[0].workload_status == "active"
