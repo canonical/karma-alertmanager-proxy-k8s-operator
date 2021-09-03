@@ -6,7 +6,7 @@
 
 import logging
 
-from charms.karma_k8s.v0.karma import KarmaConsumer
+from charms.karma_k8s.v0.karma import KarmaProvider
 from ops.charm import CharmBase
 from ops.main import main
 from ops.model import ActiveStatus, BlockedStatus
@@ -23,24 +23,23 @@ class AlertmanagerKarmaProxyCharm(CharmBase):
     def __init__(self, *args):
         super().__init__(*args)
 
-        self.karma_lib = KarmaConsumer(
-            self,
-            self._relation_name,
-            consumes={self._service_name: ">=0.86"},
-        )
+        self.karma_provider = KarmaProvider(self, self._relation_name, "0.86")
+
+        # TODO remove after https://github.com/canonical/operator/issues/586 is addressed
+        self.karma_provider.ready()
 
         # Core lifecycle events
         self.framework.observe(self.on.config_changed, self._on_config_changed)
 
     def _update_unit_status(self):
         """Helper function for updating the unit's status holistically."""
-        if not self.karma_lib.config_valid:
+        if not self.karma_provider.config_valid:
             self.unit.status = BlockedStatus(
                 "Waiting for 'juju config url=...' with alertmanager url"
             )
             return
 
-        self.unit.status = ActiveStatus(f"Proxying {self.karma_lib.target}")
+        self.unit.status = ActiveStatus(f"Proxying {self.karma_provider.target}")
 
     def _on_config_changed(self, _):
         """Event handler for ConfigChangedEvent."""
@@ -48,7 +47,7 @@ class AlertmanagerKarmaProxyCharm(CharmBase):
         if url := self.config.get("url"):
             logger.debug("url = %s", url)
 
-            self.karma_lib.target = url
+            self.karma_provider.target = url
 
         self._update_unit_status()
 

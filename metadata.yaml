@@ -18,6 +18,6 @@ resources:
     type: oci-image
     description: Docker image for placeholder - won't be used
 
-requires:
+provides:
   karma-dashboard:
     interface: karma_dashboard
