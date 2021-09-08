@@ -1,12 +1,12 @@
 [project]
-name = "alertmanager-operator"
-description = "Kubernetes charm for Alertmanager"
+name = "karma-alertmanager-proxy-operator"
+description = "Kubernetes charm for proxying remote alertmanager"
 license = "Apache 2.0"
 python = "^3.8"
 readme = "README.md"
-homepage = "https://charmhub.io/alertmanager-k8s"
-repository = "https://github.com/canonical/alertmanager-operator"
-documentation = "https://charmhub.io/alertmanager-k8s/docs"
+homepage = "https://charmhub.io/karma-alertmanager-proxy-k8s"
+repository = "https://github.com/canonical/karma-alertmanager-proxy-operator"
+documentation = "https://charmhub.io/karma-alertmanager-proxy-k8s/docs"
 
 # Testing tools configuration
 [tool.coverage.run]
@@ -59,7 +59,7 @@ allow_redefinition = true
 
 # Ignore libraries that do not have type hint nor stubs
 [[tool.mypy.overrides]]
-module = ["ops.*", "kubernetes.*", "flatten_json.*"]
+module = ["ops.*"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
