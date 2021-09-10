@@ -7,12 +7,12 @@ import unittest
 from ops.model import ActiveStatus, BlockedStatus
 from ops.testing import Harness
 
-from charm import AlertmanagerKarmaProxyCharm
+from charm import KarmaAlertmanagerProxyCharm
 
 
 class TestCharm(unittest.TestCase):
     def setUp(self):
-        self.harness = Harness(AlertmanagerKarmaProxyCharm)
+        self.harness = Harness(KarmaAlertmanagerProxyCharm)
         self.addCleanup(self.harness.cleanup)
 
         self.harness.set_leader(True)
