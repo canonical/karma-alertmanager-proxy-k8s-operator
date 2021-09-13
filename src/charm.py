@@ -14,7 +14,7 @@ from ops.model import ActiveStatus, BlockedStatus
 logger = logging.getLogger(__name__)
 
 
-class AlertmanagerKarmaProxyCharm(CharmBase):
+class KarmaAlertmanagerProxyCharm(CharmBase):
     """A Juju charm for "proxying" a remote alertmanager for Karma."""
 
     _relation_name = "karma-dashboard"
@@ -23,10 +23,7 @@ class AlertmanagerKarmaProxyCharm(CharmBase):
     def __init__(self, *args):
         super().__init__(*args)
 
-        self.karma_provider = KarmaProvider(self, self._relation_name, "0.86")
-
-        # TODO remove after https://github.com/canonical/operator/issues/586 is addressed
-        self.karma_provider.ready()
+        self.karma_provider = KarmaProvider(self, self._relation_name)
 
         # Core lifecycle events
         self.framework.observe(self.on.config_changed, self._on_config_changed)
@@ -53,4 +50,4 @@ class AlertmanagerKarmaProxyCharm(CharmBase):
 
 
 if __name__ == "__main__":
-    main(AlertmanagerKarmaProxyCharm, use_juju_for_storage=True)
+    main(KarmaAlertmanagerProxyCharm, use_juju_for_storage=True)
