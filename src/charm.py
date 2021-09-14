@@ -6,7 +6,7 @@
 
 import logging
 
-from charms.karma_k8s.v0.karma import KarmaProvider
+from charms.karma_k8s.v0.karma_dashboard import KarmaProvider
 from ops.charm import CharmBase
 from ops.main import main
 from ops.model import ActiveStatus, BlockedStatus
