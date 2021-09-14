@@ -55,7 +55,7 @@ async def test_build_and_deploy(ops_test):
         )
         assert retcode == 0, f"Deploy failed: {(stderr or stdout).strip()}"
         log.info(stdout)
-        await ops_test.model.wait_for_idle(apps=[alias], status=wait_for_status, timeout=60)
+        await ops_test.model.wait_for_idle(apps=[alias], status=wait_for_status, timeout=120)
 
     # due to a juju bug, occasionally some charms finish a startup sequence with "waiting for IP
     # address" issuing dummy update_status just to trigger an event
