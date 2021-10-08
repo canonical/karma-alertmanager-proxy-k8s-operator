@@ -17,6 +17,7 @@ resources:
   placeholder-image:
     type: oci-image
     description: Docker image for placeholder - won't be used
+    upstream-source: alpine
 
 provides:
   karma-dashboard:
