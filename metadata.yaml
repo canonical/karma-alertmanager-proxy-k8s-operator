@@ -2,7 +2,6 @@
 # See LICENSE file for licensing details.
 
 name: karma-alertmanager-proxy-k8s
-display-name: Karma Alertmanager Proxy
 description: |
   Relation provider for Karma, we give this charm an Alertmanager server details
   via configuration, and relate it to Karma to have Karma link to the remote host.
@@ -17,6 +16,7 @@ resources:
   placeholder-image:
     type: oci-image
     description: Docker image for placeholder - won't be used
+    upstream-source: alpine
 
 provides:
   karma-dashboard:
