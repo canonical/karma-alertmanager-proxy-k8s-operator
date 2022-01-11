@@ -34,7 +34,7 @@ async def test_charm_goes_into_active_state_after_alertmanager_ip_provided(ops_t
         await ops_test.model.wait_for_idle(apps=["am"], status="active")
 
     # configure the proxy charm (the charm-under-test) with alertmanager's IP address
-    url = f"http://{get_unit_address(ops_test, 'am', 0)}:9093"
+    url = f"http://{await get_unit_address(ops_test, 'am', 0)}:9093"
     await ops_test.model.applications["proxy"].set_config({"url": url})
 
     # after IP address is configured, the charm should be in "active" status
