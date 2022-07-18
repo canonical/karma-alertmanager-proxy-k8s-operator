@@ -55,6 +55,10 @@ allow_redefinition = true
 module = ["ops.*", "pytest_operator.*"]
 ignore_missing_imports = true
 
+[[tool.mypy.overrides]]
+module = ["charms.karma_k8s.*"]
+follow_imports = "silent"
+
 [tool.pytest.ini_options]
 minversion = "6.0"
 log_cli_level = "INFO"
