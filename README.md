@@ -1,5 +1,9 @@
 # Karma Alertmanager Proxy (k8s)
 
+[![CharmHub Badge](https://charmhub.io/karma-alertmanager-proxy-k8s/badge.svg)](https://charmhub.io/karma-alertmanager-proxy-k8s)
+[![Release to Edge](https://github.com/canonical/karma-alertmanager-proxy-k8s-operator/actions/workflows/release-edge.yaml/badge.svg)](https://github.com/canonical/karma-alertmanager-proxy-k8s-operator/actions/workflows/release-edge.yaml)
+[![Discourse Status](https://img.shields.io/discourse/status?server=https%3A%2F%2Fdiscourse.charmhub.io&style=flat&label=CharmHub%20Discourse)](https://discourse.charmhub.io)
+
 ## Description
 
 Proxy charm to provide the details of an [Alertmanager][Alertmanager operator]
