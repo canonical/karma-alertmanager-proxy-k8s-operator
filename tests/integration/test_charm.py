@@ -20,7 +20,9 @@ async def test_build_and_deploy(ops_test, charm_under_test):
     """Deploy the charm-under-test and deploy it together with related charms."""
     # deploy charm from local source folder
     resources = {"placeholder-image": "alpine"}
-    await ops_test.model.deploy(charm_under_test, resources=resources, application_name="proxy")
+    await ops_test.model.deploy(
+        charm_under_test, resources=resources, application_name="proxy", series="focal"
+    )
     # the charm should go into blocked status until the "proxied" url is configured
     await ops_test.model.wait_for_idle(apps=["proxy"], status="blocked")
     assert ops_test.model.applications["proxy"].units[0].workload_status == "blocked"
@@ -30,7 +32,13 @@ async def test_build_and_deploy(ops_test, charm_under_test):
 async def test_charm_goes_into_active_state_after_alertmanager_ip_provided(ops_test):
     # deploy alertmanager
     async with IPAddressWorkaround(ops_test):
-        await ops_test.model.deploy("ch:alertmanager-k8s", application_name="am", channel="edge")
+        await ops_test.model.deploy(
+            "ch:alertmanager-k8s",
+            application_name="am",
+            channel="edge",
+            trust=True,
+            series="focal",
+        )
         await ops_test.model.wait_for_idle(apps=["am"], status="active")
 
     # configure the proxy charm (the charm-under-test) with alertmanager's IP address
@@ -46,7 +54,9 @@ async def test_charm_goes_into_active_state_after_alertmanager_ip_provided(ops_t
 async def test_karma_charm_goes_into_active_state_after_related_to_proxy(ops_test):
     """Confirm alertmanager is reachable, after its IP has been passed to the proxy charm."""
     # deploy karma
-    await ops_test.model.deploy("ch:karma-k8s", application_name="karma", channel="edge")
+    await ops_test.model.deploy(
+        "ch:karma-k8s", application_name="karma", channel="edge", series="focal"
+    )
     await ops_test.model.wait_for_idle(apps=["karma"], status="blocked")
 
     await ops_test.model.add_relation("proxy", "karma")

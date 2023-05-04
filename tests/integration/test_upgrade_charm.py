@@ -23,7 +23,9 @@ async def test_config_values_are_retained_after_pod_upgraded(ops_test, charm_und
     resources = {
         "placeholder-image": METADATA["resources"]["placeholder-image"]["upstream-source"]
     }
-    await ops_test.model.deploy(f"ch:{app_name}", application_name=app_name, channel="edge")
+    await ops_test.model.deploy(
+        f"ch:{app_name}", application_name=app_name, channel="edge", series="focal"
+    )
 
     config = {"url": "1.2.3.4"}
     await ops_test.model.applications[app_name].set_config(config)
