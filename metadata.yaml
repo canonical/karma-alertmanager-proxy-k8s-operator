@@ -8,16 +8,6 @@ description: |
 summary: |
   Relation data provider for Karma charm.
 
-containers:
-  placeholder:
-    resource: placeholder-image
-
-resources:
-  placeholder-image:
-    type: oci-image
-    description: Docker image for placeholder - won't be used
-    upstream-source: alpine
-
 provides:
   karma-dashboard:
     interface: karma_dashboard
