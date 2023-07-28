@@ -92,8 +92,7 @@ charmcraft pack
 ## Usage
 
 ```shell
-juju deploy ./alertmanager-karma-proxy-k8s.charm \
-  --resource placeholder-image=alpine
+juju deploy ./alertmanager-karma-proxy-k8s.charm
 juju config alertmanager-karma-proxy-k8s url="http://whatever:9093"
 ```
 
