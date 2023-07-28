@@ -30,7 +30,7 @@ class KarmaAlertmanagerProxyCharm(CharmBase):
 
     def _update_unit_status(self):
         """Helper function for updating the unit's status holistically."""
-        if not self.karma_provider.config_valid:
+        if not self.karma_provider.target:
             self.unit.status = BlockedStatus(
                 "Waiting for 'juju config url=...' with alertmanager url"
             )
