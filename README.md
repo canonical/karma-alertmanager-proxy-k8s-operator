@@ -12,7 +12,7 @@ that is used to pass data to Karma over a relation.
 
 ## Usage
 ```shell
-juju deploy karma-alertmanager-proxy-k8s --resource placeholder-image=alpine
+juju deploy karma-alertmanager-proxy-k8s
 juju relate karma-alertmanager-proxy-k8s karma-k8s
 ```
 
@@ -26,8 +26,8 @@ Therefore, if more than one alertmanager unit needs to be registered in karma,
 multiple proxy apps should be used:
 
 ```shell
-juju deploy karma-alertmanager-proxy-k8s proxy1 --resource placeholder-image=alpine
-juju deploy karma-alertmanager-proxy-k8s proxy2 --resource placeholder-image=alpine
+juju deploy karma-alertmanager-proxy-k8s proxy1
+juju deploy karma-alertmanager-proxy-k8s proxy2
 
 juju config proxy1 url="http://some.uri.somewhere:9093"
 juju config proxy2 url="http://some.uri.somewhere.else:9093"

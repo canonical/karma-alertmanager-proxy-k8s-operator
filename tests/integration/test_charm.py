@@ -19,10 +19,7 @@ METADATA = yaml.safe_load(Path("./metadata.yaml").read_text())
 async def test_build_and_deploy(ops_test, charm_under_test):
     """Deploy the charm-under-test and deploy it together with related charms."""
     # deploy charm from local source folder
-    resources = {"placeholder-image": "alpine"}
-    await ops_test.model.deploy(
-        charm_under_test, resources=resources, application_name="proxy", series="focal"
-    )
+    await ops_test.model.deploy(charm_under_test, application_name="proxy", series="focal")
     # the charm should go into blocked status until the "proxied" url is configured
     await ops_test.model.wait_for_idle(apps=["proxy"], status="blocked")
     assert ops_test.model.applications["proxy"].units[0].workload_status == "blocked"
