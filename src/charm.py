@@ -5,6 +5,7 @@
 """Proxy charm for providing alertmanager URL info to Karma."""
 
 import logging
+import typing
 
 from charms.karma_k8s.v0.karma_dashboard import KarmaProvider
 from ops.charm import CharmBase
@@ -44,7 +45,7 @@ class KarmaAlertmanagerProxyCharm(CharmBase):
         if url := self.config.get("url"):
             logger.debug("url = %s", url)
 
-            self.karma_provider.target = url
+            self.karma_provider.target = typing.cast(str, url)
 
         self._update_unit_status()
 
