@@ -4,9 +4,10 @@
 
 import unittest
 
-from charm import KarmaAlertmanagerProxyCharm
 from ops.model import ActiveStatus, BlockedStatus
 from ops.testing import Harness
+
+from charm import KarmaAlertmanagerProxyCharm
 
 
 class TestCharm(unittest.TestCase):

@@ -1,19 +1,41 @@
 # Copyright 2021 Canonical Ltd.
 # See LICENSE file for licensing details.
-
+name: karma-alertmanager-proxy-k8s
 type: charm
-bases:
-  - build-on:
-    - name: "ubuntu"
-      channel: "20.04"
-    run-on:
-    - name: "ubuntu"
-      channel: "20.04"
+summary: Relation data provider for Karma charm.
+description: |
+  Relation provider for Karma, we give this charm an Alertmanager server details
+  via configuration, and relate it to Karma to have Karma link to the remote host.
+
+links:
+  website: https://charmhub.io/karma-alertmanager-proxy-k8s
+  source: https://github.com/canonical/karma-alertmanager-proxy-k8s-operator
+  issues: https://github.com/canonical/karma-alertmanager-proxy-k8s-operator/issues
+
+platforms:
+  ubuntu@20.04:amd64:
+  ubuntu@24.04:amd64:
+
 parts:
   charm:
-    charm-binary-python-packages:
-      - ops
-      # From karma-dashboard PYDEPS
-      - pydantic
-    build-packages:
-    - git
+    source: .
+    plugin: uv
+    build-packages: [git]
+    build-snaps: [astral-uv]
+    override-build: |
+      craftctl default
+      git describe --always > $CRAFT_PART_INSTALL/version
+
+provides:
+  karma-dashboard:
+    interface: karma_dashboard
+    optional: true
+    description: |
+      Integrate with Karma by providing the Alertmanager URLs and 
+      associated information.
+
+config:
+  options:
+    url:
+      description: URL for the remote Alertmanager instance (including scheme and port number).
+      type: string
