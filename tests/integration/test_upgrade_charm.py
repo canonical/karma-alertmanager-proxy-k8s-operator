@@ -21,7 +21,9 @@ async def test_config_values_are_retained_after_pod_upgraded(ops_test, charm_und
     """Deploy from charmhub and then upgrade with the charm-under-test."""
     logger.info("deploy charm from charmhub")
     await ops_test.model.deploy(
-        f"ch:{app_name}", application_name=app_name, channel="edge", series="focal"
+        f"ch:{app_name}",
+        application_name=app_name,
+        channel="2/edge",
     )
 
     config = {"url": "1.2.3.4"}
